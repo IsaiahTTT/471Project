@@ -1,72 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart Store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f4f4;
-        }
-        header {
-            background: #222;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            padding: 30px;
-        }
-        .product {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .product img {
-            width: 100%;
-            height: 180px;
-            object-fit: contain;
-        }
-        .product a {
-            display: inline-block;
-            background: #007bff;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-<header>
-    <h1>My Shopping Cart Store</h1>
-</header>
+@section('title', 'Shop Gaming Electronics - GameTech')
 
-<div class="products">
+@section('content')
+
+<section class="hero">
+    <h1>Upgrade Your Gaming Setup</h1>
+
+    <p>
+        Discover gaming accessories, peripherals,
+        and electronics designed to take your
+        setup to the next level.
+    </p>
+</section>
+
+<h2 class="section-heading">
+    Shop Our Products
+</h2>
+
+<div class="product-grid">
+
     @forelse($products as $product)
-        <div class="product">
+
+        <div class="product-card">
+
             @if($product->image_url)
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                <img
+                    src="{{ $product->image_url }}"
+                    alt="{{ $product->name }}"
+                    class="product-image">
+            @else
+                <div class="product-image">
+                    No Image Available
+                </div>
             @endif
 
-            <h2>{{ $product->name }}</h2>
-            <p>${{ number_format($product->price, 2) }}</p>
+            <div class="product-content">
 
-            <a href="{{ route('products.show', $product->sku) }}">
-                View Product
-            </a>
+                <h3>{{ $product->name }}</h3>
+
+                <p class="product-description">
+                    {{ \Illuminate\Support\Str::limit(
+                        $product->description, 85
+                    ) }}
+                </p>
+
+                <div class="price">
+                    ${{ number_format($product->price, 2) }}
+                </div>
+
+                @if($product->stock > 0)
+                    <p class="stock">
+                        In Stock ({{ $product->stock }})
+                    </p>
+                @else
+                    <p class="stock out-of-stock">
+                        Out of Stock
+                    </p>
+                @endif
+
+                <a href="{{ route('products.show', $product->sku) }}"
+                   class="btn">
+                    View Product
+                </a>
+
+            </div>
         </div>
+
     @empty
-        <p>No products available yet.</p>
+
+        <p>No products available.</p>
+
     @endforelse
+
 </div>
 
-</body>
-</html>
+@endsection
